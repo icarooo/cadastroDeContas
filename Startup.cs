@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ContaBancariaServer.Entities;
+using ContaBancariaServer.Interfaces;
+using ContaBancariaServer.Repository;
+using ContaBancariaServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,7 +30,16 @@ namespace ContaBancariaServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<BancoContext> (options => options.UseSqlServer (Configuration.GetConnectionString ("DefaultConnection")));
+            services.AddTransient<IContas, ContaRepository> ();
+            services.AddTransient<IFebraban, FebrabanService> ();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCors (options => {
+                options.AddPolicy ("CorsPolicy",
+                    builder => builder.AllowAnyOrigin ()
+                    .AllowAnyMethod ()
+                    .AllowAnyHeader ());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,8 +53,8 @@ namespace ContaBancariaServer
             {
                 app.UseHsts();
             }
-
-            app.UseHttpsRedirection();
+            app.UseCors ("CorsPolicy");
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
