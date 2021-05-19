@@ -52,8 +52,9 @@ namespace ContaBancariaServer.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult  Delete(int id)
         {
+           return _contaRepository.deleteConta(id)? StatusCode(200) : NotFound();
         }
     }
 }

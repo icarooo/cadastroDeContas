@@ -9,6 +9,8 @@ namespace ContaBancariaServer.Interfaces
          List<conta> getContasList();
          conta getContaById(int id);
          Task<conta> gravarDados(conta conta);
+         
+         bool deleteConta(int id);
 
     }
 }

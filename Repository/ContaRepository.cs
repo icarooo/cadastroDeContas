@@ -4,6 +4,7 @@ using ContaBancariaServer.Interfaces;
 using ContaBancariaServer.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace ContaBancariaServer.Repository
 {
@@ -13,6 +14,18 @@ namespace ContaBancariaServer.Repository
         public ContaRepository ( BancoContext db) 
         {
             _db = db;
+        }
+
+        public bool deleteConta(int id)
+        {
+            try {
+                _db.contas.RemoveRange(new conta { id = id});
+                _db.SaveChanges();
+                return true;
+            }
+            catch (Exception e) {
+                return false;
+            }
         }
 
         public conta getContaById(int id)
